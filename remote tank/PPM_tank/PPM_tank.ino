@@ -1,9 +1,14 @@
 #define LMotor_PWM_ENA 3
 #define LMotor_INT1 
-#define Lmotor_INT2
+#define LMotor_INT2
 #define LMorot_PWM_ENB 5
-#define Rmotor_INT3
-#define Rmotor_INT4
+#define RMotor_INT3
+#define RMotor_INT4
+//asume
+#define LMotor_dir 1
+#define RMotor_dir 1
+
+#define RMotor
 
 #define PPM 2
 
@@ -22,17 +27,62 @@ void setup() {
   pinMode(RMotor_INT3,OUTPUT);
   pinMode(Rmotor_INT4,OUTPUT);
   
-        Serial.begin(9600);  
-    
-        
-        //PPM inputs from RC receiver
-        pinMode(PPM, INPUT); 
-      
-
-        // 电平变化即触发中断
-        attachInterrupt(0, rc1, CHANGE);    
+  pinMode(PPM, INPUT);
+  
+  Serial.begin(9600);  
+  
+  attachInterrupt(0, rc1, CHANGE);    
            
 }
+
+void stright_move(bool dir,int sped){
+  
+  if(dir){ 
+    digitalWrite(RMotor_INT3,RMotor_dir);//!1 is 0 and !0 is 1 so good may be it is boolen
+    digitalWrite(RMotor_INT4,!Rmotor_dir);
+    analogWrite(RMotr_PWM_ENB,sped);
+    
+    digitalWrite(LMotor_INT3,LMotor_dir);
+    digitalWrite(LMotor_INT4,!LMotor_dir);
+    analogWrite(LMotr_PWM_ENB,sped);
+  }
+  else{
+    digitalWrite(RMotor_INT3,!LMotor_dir);
+    digitalWrite(RMotor_INT4,LMotor_dir);
+    analogWrite(RMotr_PWM_ENB,sped);
+    
+    digitalWrite(LMotor_INT3,!LMotor_dir);
+    digitalWrite(LMotor_INT4,LMotor_dir);
+    analogWrite(LMotr_PWM_ENB,sped);
+    }
+}
+
+void turn_dir(int mode, bool dir, int sped){
+  switch(mode){
+    case 0://turn dir situ
+       if(dir){
+          digitalWrite(RMotor_INT3,!LMotor_dir);
+          digitalWrite(RMotor_INT4,LMotor_dir);
+          analogWrite(RMotr_PWM_ENB,sped);
+          
+          digitalWrite(LMotor_INT3,LMotor_dir);
+          digitalWrite(LMotor_INT4,!LMotor_dir);
+          analogWrite(LMotr_PWM_ENB,sped);
+        }
+        else{
+          digitalWrite(RMotor_INT3,LMotor_dir);
+          digitalWrite(RMotor_INT4,!LMotor_dir);
+          analogWrite(RMotr_PWM_ENB,sped);
+          
+          digitalWrite(LMotor_INT3,LMotor_dir);
+          digitalWrite(LMotor_INT4,!LMotor_dir);
+          analogWrite(LMotr_PWM_ENB,sped);
+          }
+    case 1:// turn dir like a car
+        
+    }
+  }
+
 
 void rc1()
 {
@@ -56,8 +106,6 @@ void rc1()
         }
                 
 }
-
-void 
 
 void loop() {
     
